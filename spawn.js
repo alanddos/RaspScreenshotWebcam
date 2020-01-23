@@ -23,14 +23,35 @@ var getDiretorios = function () {
 };
 
 var capturarImagem = function () {
-    //ffmpeg -f video4linux2 -i /dev/video0 -vframes 1 test.jpeg
-    const ls = '';
-    if (process.platform == 'darwin'){
-        ls = spawn('ffmpeg -f video4linux2 -i /dev/video0 -vframes 1 test.jpeg');
-    }else{
-        ls = spawn('sudo ffmpeg -f video4linux2 -i /dev/video0 -vframes 1 test.jpeg');
+    var ls = '';
+    if (process.platform == 'darwin') {
+        ls = spawn("ffmpeg", [
+            '-f',
+            'dshow',
+            '-i',
+            'video=HD Pro Webcam C270',
+            '-vframes',
+            '1',
+            'test.jpeg',
+            '-'
+        ], {
+            detached: false
+        })
+    } else {
+        ls = ls = spawn("ffmpeg", [
+            '-f',
+            'video4linux2',
+            '-i',
+            '/dev/video0',
+            '-vframes',
+            '1',
+            'test.jpeg',
+            '-'
+        ], {
+            detached: false
+        })
     }
-        
+
     console.log(ls)
 
     ls.stdout.on('data', (data) => {
