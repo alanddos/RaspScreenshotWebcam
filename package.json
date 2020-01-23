@@ -1,0 +1,22 @@
+{
+  "name": "raspscreenshotwebcam",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alanddos/RaspScreenshotWebcam.git"
+  },
+  "author": "Alan Gonçalves Irala",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alanddos/RaspScreenshotWebcam/issues"
+  },
+  "homepage": "https://github.com/alanddos/RaspScreenshotWebcam#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
