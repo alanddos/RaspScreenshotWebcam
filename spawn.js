@@ -24,7 +24,13 @@ var getDiretorios = function () {
 
 var capturarImagem = function () {
     //ffmpeg -f video4linux2 -i /dev/video0 -vframes 1 test.jpeg
-    const ls = spawn('ffmpeg -f video4linux2 -i /dev/video0 -vframes 1 test.jpeg');
+    const ls
+    if (process.platform == 'darwin'){
+        ls = spawn('ffmpeg -f video4linux2 -i /dev/video0 -vframes 1 test.jpeg');
+    }else{
+        ls = spawn('sudo ffmpeg -f video4linux2 -i /dev/video0 -vframes 1 test.jpeg');
+    }
+        
     console.log(ls)
 
     ls.stdout.on('data', (data) => {
