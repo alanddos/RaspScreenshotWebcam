@@ -7,7 +7,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/diretorio', function (req, res) {
-  res.send(spawCommands.getDiretorios());
+  res.send(spawCommands.getDiretorio());
 });
 
 app.get('/capturar', function (req, res) {

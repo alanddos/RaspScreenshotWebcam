@@ -11,7 +11,7 @@ var getAppData = function () {
 }
 
 //func Externas
-var getDiretorios = function () {
+var getDiretorio = function () {
 
     let diretorio = path.join(getAppData(), "imagens", moment().format('DD-MM-YYYY'));
 
@@ -32,7 +32,7 @@ var capturarImagem = function () {
             'video=HD Pro Webcam C270',
             '-vframes',
             '1',
-            `cam1${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
+            `${getDiretorio()}/cam1${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
         ], {
             detached: false
         })
@@ -44,50 +44,36 @@ var capturarImagem = function () {
             '/dev/video0',
             '-vframes',
             '1',
-            `cam1${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
+            `${getDiretorio()}/cam1${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
         ], {
             detached: false
         })
     }
 
-    //console.log(ls)
-
-    ls.stdout.on('data', (data) => {
-        console.log('mpeg1data', data)
-    })
-    ls.stderr.on('data', (data) => {
-        console.error('ffmpegStderr', data.toString())
-    })
     ls.on('exit', (code, signal) => {
         if (code === 1) {
             console.log(signal)
-            console.error('Stream exited with error')
-        }else{
-            console.log('Exit is ok',signal)
+            console.error('Finalizou com erro')
+        } else {
+            console.log('Finalizou')
+
+            console.log(ls)
+
+            // const path = iconDir + '\\codificado.txt';
+
+            // fs.access(path, fs.F_OK, (err) => {
+            //     if (err) {
+            //         console.error('não encontrou a imagem', err);
+            //         return;
+            //     }
+            //     console.error('encontrou a imagem!');
+            // })
+
         }
     })
-
-    // ls.stdout.on('data', (data) => {
-    //     console.log(`stdout: ${data}`);
-    // });
-
-    // ls.stderr.on('data', (data) => {
-    //     console.error(`stderr: ${data}`);
-    // });
-
-    // ls.on('close', (code) => {
-    //     console.log(`child process exited with code ${code}`);
-    //     if (code == 0) {
-    //         // fs.unlink(iconDir + '\\codificado.txt', function (err) {
-    //         //     if (err) throw err;
-    //         //     // if no error, file has been deleted successfully
-    //         //     console.log('File deleted!');
-    //         // });
-    //     }
-    // });
 
 };
 
 module.exports.getAppData = getAppData;
-module.exports.getDiretorios = getDiretorios;
+module.exports.getDiretorio = getDiretorio;
 module.exports.capturarImagem = capturarImagem;
