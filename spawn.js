@@ -32,7 +32,7 @@ var capturarImagem = function () {
             'video=HD Pro Webcam C270',
             '-vframes',
             '1',
-            `cam1${moment('DD-MM-YYYY HH:mm:ss')}.jpeg`
+            `cam1${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
         ], {
             detached: false
         })
@@ -44,7 +44,7 @@ var capturarImagem = function () {
             '/dev/video0',
             '-vframes',
             '1',
-            `cam1${moment('DD-MM-YYYY HH:mm:ss')}.jpeg`
+            `cam1${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
         ], {
             detached: false
         })
@@ -56,7 +56,7 @@ var capturarImagem = function () {
         console.log('mpeg1data', data)
     })
     ls.stderr.on('data', (data) => {
-        console.error('ffmpegStderr', data)
+        console.error('ffmpegStderr', data.toString())
     })
     ls.on('exit', (code, signal) => {
         if (code === 1) {
@@ -64,15 +64,6 @@ var capturarImagem = function () {
             console.error('Stream exited with error')
         }else{
             console.log('Exit is ok',signal)
-        }
-    })
-
-    ls.on('close', (code, signal) => {
-        if (code === 1) {
-            console.log(signal)
-            console.error('Stream exited with error2')
-        }else{
-            console.log('Exit is ok2',signal)
         }
     })
 
