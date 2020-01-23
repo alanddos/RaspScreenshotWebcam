@@ -32,44 +32,68 @@ var capturarImagem = function () {
             'video=HD Pro Webcam C270',
             '-vframes',
             '1',
-            'test.jpeg'
+            `cam1${moment('DD-MM-YYYY HH:mm:ss')}.jpeg`
         ], {
             detached: false
         })
     } else {
-        ls = ls = spawn("ffmpeg", [
+        ls = spawn("ffmpeg", [
             '-f',
             'video4linux2',
             '-i',
             '/dev/video0',
             '-vframes',
             '1',
-            'test.jpeg'
+            `cam1${moment('DD-MM-YYYY HH:mm:ss')}.jpeg`
         ], {
             detached: false
         })
     }
 
-    console.log(ls)
+    //console.log(ls)
 
     ls.stdout.on('data', (data) => {
-        console.log(`stdout: ${data}`);
-    });
-
+        console.log('mpeg1data', data)
+    })
     ls.stderr.on('data', (data) => {
-        console.error(`stderr: ${data}`);
-    });
-
-    ls.on('close', (code) => {
-        console.log(`child process exited with code ${code}`);
-        if (code == 0) {
-            // fs.unlink(iconDir + '\\codificado.txt', function (err) {
-            //     if (err) throw err;
-            //     // if no error, file has been deleted successfully
-            //     console.log('File deleted!');
-            // });
+        console.error('ffmpegStderr', data)
+    })
+    ls.on('exit', (code, signal) => {
+        if (code === 1) {
+            console.log(signal)
+            console.error('Stream exited with error')
+        }else{
+            console.log('Exit is ok',signal)
         }
-    });
+    })
+
+    ls.on('close', (code, signal) => {
+        if (code === 1) {
+            console.log(signal)
+            console.error('Stream exited with error2')
+        }else{
+            console.log('Exit is ok2',signal)
+        }
+    })
+
+    // ls.stdout.on('data', (data) => {
+    //     console.log(`stdout: ${data}`);
+    // });
+
+    // ls.stderr.on('data', (data) => {
+    //     console.error(`stderr: ${data}`);
+    // });
+
+    // ls.on('close', (code) => {
+    //     console.log(`child process exited with code ${code}`);
+    //     if (code == 0) {
+    //         // fs.unlink(iconDir + '\\codificado.txt', function (err) {
+    //         //     if (err) throw err;
+    //         //     // if no error, file has been deleted successfully
+    //         //     console.log('File deleted!');
+    //         // });
+    //     }
+    // });
 
 };
 
