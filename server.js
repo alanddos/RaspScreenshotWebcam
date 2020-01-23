@@ -10,6 +10,10 @@ app.get('/diretorio', function (req, res) {
   res.send(spawCommands.getDiretorios());
 });
 
+app.get('/capturar', function (req, res) {
+  res.send(spawCommands.capturarImagem());
+});
+
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!');
 });
