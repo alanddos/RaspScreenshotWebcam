@@ -32,8 +32,7 @@ var capturarImagem = function () {
             'video=HD Pro Webcam C270',
             '-vframes',
             '1',
-            'test.jpeg',
-            '-'
+            'test.jpeg'
         ], {
             detached: false
         })
@@ -45,8 +44,7 @@ var capturarImagem = function () {
             '/dev/video0',
             '-vframes',
             '1',
-            'test.jpeg',
-            '-'
+            'test.jpeg'
         ], {
             detached: false
         })
