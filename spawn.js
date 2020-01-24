@@ -59,14 +59,17 @@ var localizarCameras = function () {
                 * 5. message
                 */
 
-                let cameras = '';
-                ls.on('message', (data) => {
-                    console.log('Mensagens',data)
+                var cameras = '';
+                ls.on('message').then(data => {
+                    console.log('mensagem',data)
                     cameras = data
+                }).catch(erro => {
+                    console.log('Falha',erro)
                 })
 
                 ls.on('error', (erro) => {
                     console.log('Falha',erro)
+                    cameras = erro;
                 })
 
 
@@ -75,6 +78,7 @@ var localizarCameras = function () {
                         console.error(code,signal)
                         reject('Finalizou com erro')
                      }else{
+                        console.log(cameras)
                         reject('Finalizou')
                      }
                 })
