@@ -22,14 +22,32 @@ var getDiretorio = function () {
     return diretorio
 };
 
+//localizar os index de video
+function getAllIndexes(arr, val) {
+    var indexes = [], i = -1;
+    while ((i = arr.indexOf(val, i + 1)) != -1) {
+        indexes.push(i);
+    }
+    return indexes;
+}
+
 var localizarCameras = function () {
 
     return new Promise(
         async (resolve, reject) => {
             try {
+                /**
+                * events.EventEmitter
+                * 1. close
+                * 2. disconnect
+                * 3. error
+                * 4. exit
+                * 5. message
+                */
                 var ls = '';
+                var result = [];
                 console.log(process.platform)
-                if (process.platform == 'win32') {
+                if (process.platform == 'win32') {//para windows...
                     params = [
                         '-list_devices',
                         'true',
@@ -41,63 +59,48 @@ var localizarCameras = function () {
                     ls = spawn("ffmpeg", params, {
                         detached: false
                     })
-                } else {
+
+                    ls.stderr.on('data', (erro) => {
+                        console.log(`Falha, ${erro}`)//dshow apresenta como erro os dados :'(
+                        cameras = erro;
+                    })
+
+                    //DirectShow video devices
+
+                    //DirectShow audio devices
+
+                }
+
+                if (process.platform == 'linux') {
                     params = [
                         '--list-devices'
                     ];
                     ls = spawn("v4l2-ctl", params, {
                         detached: false
                     })
-                }
 
-                /**
-                * events.EventEmitter
-                * 1. close
-                * 2. disconnect
-                * 3. error
-                * 4. exit
-                * 5. message
-                */
+                    var cameras = '';
+                    ls.stdout.on('data', (data) => {
+                        console.log(`Mensagens, ${data}`)
+                        cameras = data.toString()
 
-                var cameras = '';
-                var result = [];
-                ls.stdout.on('data', (data) => {
-                    console.log(`Mensagens, ${data}`)
-                    cameras = data.toString()
-                    //localizar os index de video
+                        var indexes = getAllIndexes(cameras, "/dev/video");
 
-                    function getAllIndexes(arr, val) {
-                        var indexes = [], i = -1;
-                        while ((i = arr.indexOf(val, i+1)) != -1){
-                            indexes.push(i);
+                        for (let index = 0; index < indexes.length; index++) {
+                            const element = indexes[index];
+                            let text = cameras.substring(element, element + 12).replace(/(\r\n|\n|\r)/gm, "")//até 99 cameras
+                            result.push(text)
                         }
-                        return indexes;
-                    }
-                    
-                    var indexes = getAllIndexes(cameras, "/dev/video");
-
-                    for (let index = 0; index < indexes.length; index++) {
-                        const element = indexes[index];
-                        let text = cameras.substring(element, element + 12).replace(/(\r\n|\n|\r)/gm, "")
-                        result.push(text)
-                    }
-
-                    console.log(indexes)
-                })
-
-                ls.stderr.on('data', (erro) => {
-                    console.log(`Falha, ${erro}`)
-                    cameras = erro;
-                })
-
+                    })
+                }
 
                 ls.on('exit', (code, signal) => {
                     if (code === 1) {
-                        console.error(code,signal)
+                        console.error(code, signal)
                         reject('Finalizou com erro')
-                     }else{
+                    } else {
                         resolve(result)
-                     }
+                    }
                 })
             } catch (error) {
                 console.log(error)
@@ -112,6 +115,7 @@ var capturarImagem = async function () {
     return new Promise(
         async (resolve, reject) => {
             var params = '';
+            var imagens = [];
             if (process.platform == 'darwin') {
                 params = [
                     '-f',
@@ -122,52 +126,61 @@ var capturarImagem = async function () {
                     '1',
                     `${getDiretorio()}/cam1-${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
                 ];
-            } else {
-                params = [
-                    '-f',
-                    'video4linux2',
-                    '-i',
-                    '/dev/video0',
-                    '-vframes',
-                    '1',
-                    `${getDiretorio()}/cam1-${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
-                ];
             }
+            if (process.platform == 'linux') {
 
-            ls = spawn("ffmpeg", params, {
-                detached: false
-            })
+                var cameras = await localizarCameras()
 
-            ls.on('exit', (code, signal) => {
-                if (code === 1) {
-                    console.log(signal)
-                    console.error('Finalizou com erro')
-                } else {
+                for (let index = 0; index < cameras.length; index++) {
+                    const video = cameras[index];
+                    params = [
+                        '-f',
+                        'video4linux2',
+                        '-i',
+                        video,
+                        '-vframes',
+                        '1',
+                        `${getDiretorio()}/${video}-${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
+                    ];
 
-                    console.log(params[6])
-
-
-                    const path = params[6];
-
-                    fs.access(path, fs.F_OK, (err) => {
-                        if (err) {
-                            console.error('não encontrou a imagem', err);
-                            return;
-                        }
-                        console.error('encontrou a imagem!');
-                        fs.readFile(path, (err, data) => {
-
-                            //error handle
-                            if (err) return "Falha ao ler imagem do disco";
-
-                            //convert image file to base64-encoded string
-                            let base64Image = new Buffer(data, 'binary').toString('base64');
-
-                            resolve(base64Image);
-                        })
+                    ls = spawn("ffmpeg", params, {
+                        detached: false
                     })
-                }
-            })
+
+                    ls.on('exit', (code, signal) => {
+                        if (code === 1) {
+                            console.log(signal)
+                            console.error('Finalizou com erro')
+                        } else {
+
+                            console.log(params[6])
+
+                            const path = params[6];
+
+                            fs.access(path, fs.F_OK, (err) => {
+                                if (err) {
+                                    console.error('não encontrou a imagem', err);
+                                    return;
+                                }
+                                console.error('encontrou a imagem!');
+                                fs.readFile(path, (err, data) => {
+
+                                    //error handle
+                                    if (err) return "Falha ao ler imagem do disco";
+
+                                    //convert image file to base64-encoded string
+                                    let base64Image = new Buffer(data, 'binary').toString('base64');
+
+                                    imagens.push(base64Image);
+                                })
+                            })
+                        }
+                    })//exitFfmpeg
+
+                }//endfor
+                resolve(imagens)
+
+            }//if Linux
         }
     )
 };
