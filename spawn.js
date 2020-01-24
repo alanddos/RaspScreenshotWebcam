@@ -64,7 +64,18 @@ var localizarCameras = function () {
                 var cameras = '';
                 ls.stdout.on('data', (data) => {
                     console.log(`Mensagens, ${data}`)
-                    cameras = data
+                    cameras = data.toString()
+                    //localizar os index de video
+
+                    function getAllIndexes(arr, val) {
+                        var indexes = [], i = -1;
+                        while ((i = cameras.indexOf(val, i+1)) != -1){
+                            indexes.push(i);
+                        }
+                        console.log(indexes);
+                    }
+                    
+                    var indexes = getAllIndexes(Cars, "Nano");
                 })
 
                 ls.stderr.on('data', (erro) => {
