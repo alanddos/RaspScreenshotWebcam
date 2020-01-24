@@ -59,8 +59,6 @@ var localizarCameras = function () {
                 * 5. message
                 */
 
-                console.log(ls)
-
                 var cameras = '';
                 var result = [];
                 ls.stdout.on('data', (data) => {
