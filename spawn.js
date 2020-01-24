@@ -59,6 +59,8 @@ var localizarCameras = function () {
                 * 5. message
                 */
 
+                console.log(ls)
+
                 var cameras = '';
                 ls.stdout.on('data', (data) => {
                     console.log(`Mensagens, ${data}`)
@@ -67,13 +69,14 @@ var localizarCameras = function () {
 
                     function getAllIndexes(arr, val) {
                         var indexes = [], i = -1;
-                        while ((i = cameras.indexOf(val, i + 1)) != -1) {
+                        while ((i = arr.indexOf(val, i+1)) != -1){
                             indexes.push(i);
                         }
-                        console.log(indexes);
+                        return indexes;
                     }
-
-                    var indexes = getAllIndexes(Cars, "Nano");
+                    
+                    var indexes = getAllIndexes(cameras, "/dev/video");
+                    console.log(indexes)
                 })
 
                 ls.stderr.on('data', (erro) => {
@@ -84,11 +87,11 @@ var localizarCameras = function () {
 
                 ls.on('exit', (code, signal) => {
                     if (code === 1) {
-                        console.error(code, signal)
+                        console.error(code,signal)
                         reject('Finalizou com erro')
-                    } else {
+                     }else{
                         resolve(cameras)
-                    }
+                     }
                 })
             } catch (error) {
                 console.log(error)
