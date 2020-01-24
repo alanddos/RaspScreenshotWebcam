@@ -23,32 +23,33 @@ var getDiretorio = function () {
 };
 
 var capturarImagem = function () {
-    var ls = '';
+    var params = '';
     if (process.platform == 'darwin') {
-        ls = spawn("ffmpeg", [
+	
+	params = [
             '-f',
             'dshow',
             '-i',
             'video=HD Pro Webcam C270',
             '-vframes',
             '1',
-            `${getDiretorio()}/cam1${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
-        ], {
-            detached: false
-        })
+            `${getDiretorio()}/cam1-${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
+        ];
     } else {
-        ls = spawn("ffmpeg", [
+	params = [
             '-f',
             'video4linux2',
             '-i',
             '/dev/video0',
             '-vframes',
             '1',
-            `${getDiretorio()}/cam1${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
-        ], {
+            `${getDiretorio()}/cam1-${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
+        ];
+    }
+
+    ls = spawn("ffmpeg", params, {
             detached: false
         })
-    }
 
     ls.on('exit', (code, signal) => {
         if (code === 1) {
@@ -57,17 +58,35 @@ var capturarImagem = function () {
         } else {
             console.log('Finalizou')
 
-            console.log(ls)
+            console.log(params[6])
 
-            // const path = iconDir + '\\codificado.txt';
 
-            // fs.access(path, fs.F_OK, (err) => {
-            //     if (err) {
-            //         console.error('não encontrou a imagem', err);
-            //         return;
-            //     }
-            //     console.error('encontrou a imagem!');
-            // })
+            const path = params[6];
+
+            fs.access(path, fs.F_OK, (err) => {
+                 if (err) {
+                     console.error('não encontrou a imagem', err);
+                     return;
+                 }
+                console.error('encontrou a imagem!');
+		fs.readFile(`${process.cwd()}/pics/demopic.png`, (err, data)=>{
+        
+        //error handle
+        if(err) res.status(500).send(err);
+        
+        //get image file extension name
+        let extensionName = path.extname(`${process.cwd()}/pics/demopic.png`);
+        
+        //convert image file to base64-encoded string
+        let base64Image = new Buffer(data, 'binary').toString('base64');
+        
+        //combine all strings
+        let imgSrcString = `data:image/${extensionName.split('.').pop()};base64,${base64Image}`;
+        
+        //send image src string into jade compiler
+        res.render('index', {imgSrcString});
+    })
+             })
         }
     })
 
