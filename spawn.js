@@ -175,8 +175,7 @@ var capturarImagem = async function () {
                 var cameras = await localizarCameras()
                 console.log('Cameras encontradas!', cameras)
 
-                for (let index = 0; index < cameras.length; index++) {
-                    const video = cameras[index];
+                for (const video of cameras) {                    
                     params = [
                         '-f',
                         'video4linux2',
@@ -191,7 +190,7 @@ var capturarImagem = async function () {
 
                     ffmpegs(params).then(image => {
                         imagens.push(image)
-                    }).catch(()=>{
+                    }).catch(() => {
                         imagens.push(params[3] + ': Não está disponivel para captura')
                     })
 
