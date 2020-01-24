@@ -77,8 +77,8 @@ var localizarCameras = function () {
 
                     console.log(indexes)
 
-                    for (let index = 0; index < mensagens.length; index++) {
-                        const element = mensagens[index];
+                    for (let index = 0; index < indexes.length; index++) {
+                        const element = indexes[index];
                         cameras.push(mensagens.substring(element, element + 12))    
                     }
 
