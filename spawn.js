@@ -191,7 +191,7 @@ var capturarImagem = async function () {
                     await ffmpegs(params).then(image => {
                         imagens.push(image)
                     }).catch(() => {
-                        imagens.push(params[3] + ': Não está disponivel para captura')
+                        console.log(params[3] + ': Não está disponivel para captura')
                     })
 
                 }//endfor
