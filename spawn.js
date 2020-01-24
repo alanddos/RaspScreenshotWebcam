@@ -22,66 +22,70 @@ var getDiretorio = function () {
     return diretorio
 };
 
-var capturarImagem = function () {
-    var params = '';
-    if (process.platform == 'darwin') {
+var capturarImagem = async function () {
 
-        params = [
-            '-f',
-            'dshow',
-            '-i',
-            'video=HD Pro Webcam C270',
-            '-vframes',
-            '1',
-            `${getDiretorio()}/cam1-${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
-        ];
-    } else {
-        params = [
-            '-f',
-            'video4linux2',
-            '-i',
-            '/dev/video0',
-            '-vframes',
-            '1',
-            `${getDiretorio()}/cam1-${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
-        ];
-    }
+    return new Promise(
+        async (resolve, reject) => {
+            var params = '';
+            if (process.platform == 'darwin') {
 
-    ls = spawn("ffmpeg", params, {
-        detached: false
-    })
+                params = [
+                    '-f',
+                    'dshow',
+                    '-i',
+                    'video=HD Pro Webcam C270',
+                    '-vframes',
+                    '1',
+                    `${getDiretorio()}/cam1-${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
+                ];
+            } else {
+                params = [
+                    '-f',
+                    'video4linux2',
+                    '-i',
+                    '/dev/video0',
+                    '-vframes',
+                    '1',
+                    `${getDiretorio()}/cam1-${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
+                ];
+            }
 
-    ls.on('exit', (code, signal) => {
-        if (code === 1) {
-            console.log(signal)
-            console.error('Finalizou com erro')
-        } else {
+            ls = spawn("ffmpeg", params, {
+                detached: false
+            })
 
-            console.log(params[6])
+            ls.on('exit', (code, signal) => {
+                if (code === 1) {
+                    console.log(signal)
+                    console.error('Finalizou com erro')
+                } else {
+
+                    console.log(params[6])
 
 
-            const path = params[6];
+                    const path = params[6];
 
-            fs.access(path, fs.F_OK, (err) => {
-                if (err) {
-                    console.error('não encontrou a imagem', err);
-                    return;
+                    fs.access(path, fs.F_OK, (err) => {
+                        if (err) {
+                            console.error('não encontrou a imagem', err);
+                            return;
+                        }
+                        console.error('encontrou a imagem!');
+                        fs.readFile(path, (err, data) => {
+
+                            //error handle
+                            if (err) return "Falha ao ler imagem do disco";
+
+                            //convert image file to base64-encoded string
+                            let base64Image = new Buffer(data, 'binary').toString('base64');
+
+                            resolve(base64Image);
+                        })
+                    })
                 }
-                console.error('encontrou a imagem!');
-                fs.readFile(path, (err, data) => {
-
-                    //error handle
-                    if (err) return "Falha ao ler imagem do disco";
-
-                    //convert image file to base64-encoded string
-                    let base64Image = new Buffer(data, 'binary').toString('base64');
-
-                    return base64Image;
-                })
             })
         }
-    })
-
+    )
 };
 
 module.exports.getAppData = getAppData;
