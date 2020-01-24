@@ -72,13 +72,16 @@ var localizarCameras = function () {
                         while ((i = arr.indexOf(val, i+1)) != -1){
                             indexes.push(i);
                         }
-                        for (let index = 0; index < indexes.length; index++) {
-                            const element = indexes[index];
-                            cameras.substring(element,element+12)    
-                        }
+                        return indexes;
                     }
                     
                     var indexes = getAllIndexes(cameras, "/dev/video");
+
+                    for (let index = 0; index < indexes.length; index++) {
+                        const element = indexes[index];
+                        cameras.push(mensagens.substring(element, element + 12))    
+                    }
+
                     console.log(indexes)
                 })
 
@@ -93,7 +96,7 @@ var localizarCameras = function () {
                         console.error(code,signal)
                         reject('Finalizou com erro')
                      }else{
-                        resolve(cameras.toString())
+                        resolve(cameras)
                      }
                 })
             } catch (error) {
