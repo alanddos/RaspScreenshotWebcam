@@ -108,7 +108,50 @@ var localizarCameras = function () {
         }
     )
 
+
 };
+
+var ffmpegs = async function (params) {
+
+    return new Promise(
+        async (resolve, reject) => {
+            var ls = spawn("ffmpeg", params, {
+                detached: false
+            })
+
+            ls.on('exit', (code, signal) => {
+                if (code === 1) {
+                    console.error('Finalizou com erro')
+                    reject()
+                } else {
+
+                    console.log(params[6])
+
+                    const path = params[6];
+
+                    fs.access(path, fs.F_OK, (err) => {
+                        if (err) {
+                            console.error('não encontrou a imagem', err);
+                            return;
+                        }
+                        console.error('encontrou a imagem!');
+                        fs.readFile(path, (err, data) => {
+
+                            //error handle
+                            if (err) return "Falha ao ler imagem do disco";
+
+                            //convert image file to base64-encoded string
+                            let base64Image = new Buffer(data, 'binary').toString('base64');
+
+                            resolve(base64Image);
+                        })
+                    })
+                }
+            })//exitFfmpeg
+
+        }
+    )
+}
 
 var capturarImagem = async function () {
 
@@ -130,6 +173,7 @@ var capturarImagem = async function () {
             if (process.platform == 'linux') {
 
                 var cameras = await localizarCameras()
+                console.log('Cameras encontradas!', cameras)
 
                 for (let index = 0; index < cameras.length; index++) {
                     const video = cameras[index];
@@ -143,39 +187,13 @@ var capturarImagem = async function () {
                         `${getDiretorio()}/${video}-${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
                     ];
 
-                    ls = spawn("ffmpeg", params, {
-                        detached: false
+                    console.log('parametro enviado', params)
+
+                    ffmpegs(params).then(image => {
+                        imagens.push(image)
+                    }).catch(()=>{
+                        imagens.push(params[3] + ': Não está disponivel para captura')
                     })
-
-                    ls.on('exit', (code, signal) => {
-                        if (code === 1) {
-                            console.log(signal)
-                            console.error('Finalizou com erro')
-                        } else {
-
-                            console.log(params[6])
-
-                            const path = params[6];
-
-                            fs.access(path, fs.F_OK, (err) => {
-                                if (err) {
-                                    console.error('não encontrou a imagem', err);
-                                    return;
-                                }
-                                console.error('encontrou a imagem!');
-                                fs.readFile(path, (err, data) => {
-
-                                    //error handle
-                                    if (err) return "Falha ao ler imagem do disco";
-
-                                    //convert image file to base64-encoded string
-                                    let base64Image = new Buffer(data, 'binary').toString('base64');
-
-                                    imagens.push(base64Image);
-                                })
-                            })
-                        }
-                    })//exitFfmpeg
 
                 }//endfor
                 resolve(imagens)
