@@ -76,7 +76,7 @@ var localizarCameras = function () {
                         console.error(code,signal)
                         reject('Finalizou com erro')
                      }else{
-                        reject('Finalizou')
+                        resolve(cameras)
                      }
                 })
             } catch (error) {
