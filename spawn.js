@@ -59,8 +59,6 @@ var localizarCameras = function () {
                 * 5. message
                 */
 
-                console.log(ls)
-
                 var mensagens = '';
                 var cameras = [];
                 ls.stdout.on('data', (data) => {
@@ -81,7 +79,7 @@ var localizarCameras = function () {
 
                     for (let index = 0; index < mensagens.length; index++) {
                         const element = mensagens[index];
-                        cameras.push(mensagens.substring(element, element + 12))
+                        cameras.push(mensagens.substring(element, element + 12))    
                     }
 
                     
