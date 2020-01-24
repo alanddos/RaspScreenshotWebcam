@@ -80,7 +80,8 @@ var localizarCameras = function () {
 
                     for (let index = 0; index < indexes.length; index++) {
                         const element = indexes[index];
-                        result.push(cameras.substring(element, element + 12))
+                        let text = cameras.substring(element, element + 12).replace(/(\r\n|\n|\r)/gm, "")
+                        result.push(text)
                     }
 
                     console.log(indexes)
