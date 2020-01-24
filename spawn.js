@@ -62,6 +62,7 @@ var localizarCameras = function () {
                 console.log(ls)
 
                 var cameras = '';
+                var result = [];
                 ls.stdout.on('data', (data) => {
                     console.log(`Mensagens, ${data}`)
                     cameras = data.toString()
@@ -79,7 +80,7 @@ var localizarCameras = function () {
 
                     for (let index = 0; index < indexes.length; index++) {
                         const element = indexes[index];
-                        cameras.push(mensagens.substring(element, element + 12))    
+                        result.push(mensagens.substring(element, element + 12))
                     }
 
                     console.log(indexes)
@@ -96,7 +97,7 @@ var localizarCameras = function () {
                         console.error(code,signal)
                         reject('Finalizou com erro')
                      }else{
-                        resolve(cameras)
+                        resolve(result)
                      }
                 })
             } catch (error) {
