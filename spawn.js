@@ -57,7 +57,7 @@ var capturarImagem = function () {
         } else {
             console.log('Finalizou')
 
-            console.log(ls.ChildProcess.spawnargs[7])
+            console.log(ls)
 
             // const path = iconDir + '\\codificado.txt';
 
@@ -68,7 +68,6 @@ var capturarImagem = function () {
             //     }
             //     console.error('encontrou a imagem!');
             // })
-
         }
     })
 
