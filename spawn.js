@@ -183,12 +183,12 @@ var capturarImagem = async function () {
                         video,
                         '-vframes',
                         '1',
-                        `${getDiretorio()}/${video.substring(4)}-${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
+                        `${getDiretorio()}/${video.substring(5)}-${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
                     ];
 
                     console.log('parametro enviado', params)
 
-                    ffmpegs(params).then(image => {
+                    await ffmpegs(params).then(image => {
                         imagens.push(image)
                     }).catch(() => {
                         imagens.push(params[3] + ': Não está disponivel para captura')
