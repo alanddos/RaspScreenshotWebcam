@@ -183,7 +183,7 @@ var capturarImagem = async function () {
                         video,
                         '-vframes',
                         '1',
-                        `${getDiretorio()}/${video}-${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
+                        `${getDiretorio()}/${video.substring(4)}-${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
                     ];
 
                     console.log('parametro enviado', params)
