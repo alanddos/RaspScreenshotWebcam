@@ -62,12 +62,12 @@ var localizarCameras = function () {
                 console.log(ls)
 
                 var cameras = '';
-                ls.on('message', (data) => {
+                ls.stdout.on('data', (data) => {
                     console.log(`Mensagens, ${data}`)
                     cameras = data
                 })
 
-                ls.on('error', (erro) => {
+                ls.stderr.on('data', (erro) => {
                     console.log(`Falha, ${erro}`)
                     cameras = erro;
                 })
