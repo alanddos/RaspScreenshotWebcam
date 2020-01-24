@@ -25,8 +25,8 @@ var getDiretorio = function () {
 var capturarImagem = function () {
     var params = '';
     if (process.platform == 'darwin') {
-	
-	params = [
+
+        params = [
             '-f',
             'dshow',
             '-i',
@@ -36,7 +36,7 @@ var capturarImagem = function () {
             `${getDiretorio()}/cam1-${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
         ];
     } else {
-	params = [
+        params = [
             '-f',
             'video4linux2',
             '-i',
@@ -48,15 +48,14 @@ var capturarImagem = function () {
     }
 
     ls = spawn("ffmpeg", params, {
-            detached: false
-        })
+        detached: false
+    })
 
     ls.on('exit', (code, signal) => {
         if (code === 1) {
             console.log(signal)
             console.error('Finalizou com erro')
         } else {
-            console.log('Finalizou')
 
             console.log(params[6])
 
@@ -64,29 +63,22 @@ var capturarImagem = function () {
             const path = params[6];
 
             fs.access(path, fs.F_OK, (err) => {
-                 if (err) {
-                     console.error('não encontrou a imagem', err);
-                     return;
-                 }
+                if (err) {
+                    console.error('não encontrou a imagem', err);
+                    return;
+                }
                 console.error('encontrou a imagem!');
-		fs.readFile(`${process.cwd()}/pics/demopic.png`, (err, data)=>{
-        
-        //error handle
-        if(err) res.status(500).send(err);
-        
-        //get image file extension name
-        let extensionName = path.extname(`${process.cwd()}/pics/demopic.png`);
-        
-        //convert image file to base64-encoded string
-        let base64Image = new Buffer(data, 'binary').toString('base64');
-        
-        //combine all strings
-        let imgSrcString = `data:image/${extensionName.split('.').pop()};base64,${base64Image}`;
-        
-        //send image src string into jade compiler
-        res.render('index', {imgSrcString});
-    })
-             })
+                fs.readFile(path, (err, data) => {
+
+                    //error handle
+                    if (err) return "Falha ao ler imagem do disco";
+
+                    //convert image file to base64-encoded string
+                    let base64Image = new Buffer(data, 'binary').toString('base64');
+
+                    return base64Image;
+                })
+            })
         }
     })
 
