@@ -72,16 +72,19 @@ var localizarCameras = function () {
                         var indexes = [], i = -1;
                         while ((i = arr.indexOf(val, i + 1)) != -1) {
                             indexes.push(i);
-                        }
-
-                        for (let index = 0; index < arr.length; index++) {
-                            const element = arr[index];
-                            cameras.push(mensagens.substring(element, element + 12))
-                        }
+                        }                       
                     }
 
                     var indexes = getAllIndexes(mensagens, "/dev/video");
+                    
                     console.log(indexes)
+
+                    for (let index = 0; index < arr.length; index++) {
+                        const element = arr[index];
+                        cameras.push(mensagens.substring(element, element + 12))
+                    }
+
+                    
                 })
 
                 ls.stderr.on('data', (erro) => {
