@@ -3,7 +3,7 @@ var app = express();
 var spawCommands = require('./spawn')
 
 app.get('/', function (req, res) {
-    res.send('Hello World!');
+    res.send("RAspberry it's cool!");
 });
 
 app.get('/diretorio', function (req, res) {
@@ -13,6 +13,11 @@ app.get('/diretorio', function (req, res) {
 app.get('/capturar', async function (req, res) {
     let imagem = await spawCommands.capturarImagem()
     res.send(imagem);
+});
+
+app.get('/localizarCameras', async function (req, res) {
+    let cameras = await spawCommands.localizarCameras()
+    res.send(cameras);
 });
 
 app.listen(3000, function () {

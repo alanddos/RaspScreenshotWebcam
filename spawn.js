@@ -22,18 +22,81 @@ var getDiretorio = function () {
     return diretorio
 };
 
+var localizarCameras = function () {
+
+    return new Promise(
+        async (resolve, reject) => {
+            try {
+                var ls = '';
+                console.log(process.platform)
+                if (process.platform == 'win32') {
+                    params = [
+                        '-list_devices',
+                        'true',
+                        '-f',
+                        'dshow',
+                        '-i',
+                        'dummy'
+                    ];
+                    ls = spawn("ffmpeg", params, {
+                        detached: false
+                    })
+                } else {
+                    params = [
+                        '--list-devices'
+                    ];
+                    ls = spawn("v4l2-ctl", params, {
+                        detached: false
+                    })
+                }
+
+                /**
+                * events.EventEmitter
+                * 1. close
+                * 2. disconnect
+                * 3. error
+                * 4. exit
+                * 5. message
+                */
+
+                let cameras = '';
+                ls.on('message', (data) => {
+                    console.log('Mensagens',data)
+                    cameras = data
+                })
+
+                ls.on('error', (erro) => {
+                    console.log('Falha',erro)
+                })
+
+
+                ls.on('exit', (code, signal) => {
+                    if (code === 1) {
+                        console.error(code,signal)
+                        reject('Finalizou com erro')
+                     }else{
+                        reject('Finalizou')
+                     }
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
+    )
+
+};
+
 var capturarImagem = async function () {
 
     return new Promise(
         async (resolve, reject) => {
             var params = '';
             if (process.platform == 'darwin') {
-
                 params = [
                     '-f',
                     'dshow',
                     '-i',
-                    'video=HD Pro Webcam C270',
+                    'video=GENERAL - UVC ',
                     '-vframes',
                     '1',
                     `${getDiretorio()}/cam1-${moment().format('DD-MM-YYYY HH:mm:ss')}.jpeg`
@@ -91,3 +154,4 @@ var capturarImagem = async function () {
 module.exports.getAppData = getAppData;
 module.exports.getDiretorio = getDiretorio;
 module.exports.capturarImagem = capturarImagem;
+module.exports.localizarCameras = localizarCameras;
